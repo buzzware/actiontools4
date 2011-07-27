@@ -70,7 +70,7 @@ public class ReflectionUtils {
 				return result
 			}
 
-			public static function ClassName(aObject: Object): String {
+			public static function getClassName(aObject: Object): String {
 				return shortName(getQualifiedClassName(aObject));
 			}
 

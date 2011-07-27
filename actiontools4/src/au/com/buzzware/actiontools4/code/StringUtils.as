@@ -261,5 +261,25 @@ package au.com.buzzware.actiontools4.code {
 			}
 			return result
 		}
+
+		public static function downcaseFirstChar(aString: String): String {
+			var s: String = aString.charAt(0).toLowerCase()
+			s += aString.substring(1)
+			//return aString.charAt(0).toLowerCase()+aString.substring(1)
+			return s
+		}
+
+		public static function snake_case(aCamelCaseName:String):String {
+			var result: String = StringUtils.downcaseFirstChar(aCamelCaseName)
+			// replace the capital letters with _[lowercase]
+			//
+			function repFn(): String {
+				// return arguments[2] + arguments[1];
+				trace('repFn')
+				return arguments[1]
+			}
+			result = result.replace(/[A-Z]/, repFn);
+			return result
+		}
 	}
 }

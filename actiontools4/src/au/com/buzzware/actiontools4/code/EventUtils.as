@@ -41,7 +41,7 @@ public class EventUtils {
 	public static function EventToString(aEvent:Event):String {
 		var tgt:Object = aEvent.target;
 		var result:String = (tgt != null) ? ReflectionUtils.shortName(tgt.toString()) : 'null';
-		result += ' ' + ReflectionUtils.ClassName(aEvent) + ' on '
+		result += ' ' + ReflectionUtils.getClassName(aEvent) + ' on '
 		tgt = aEvent.currentTarget
 		if (tgt)
 			result += tgt == aEvent.target ? 'self' : ReflectionUtils.shortName(tgt.toString());

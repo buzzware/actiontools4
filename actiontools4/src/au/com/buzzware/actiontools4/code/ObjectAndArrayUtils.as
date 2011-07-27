@@ -212,5 +212,11 @@ public class ObjectAndArrayUtils {
 			result.push(n);
 		return result;
 	}
+
+	public static function arrayRemove(aArray:Array, aItem:*): void {
+		var i: int = aArray.indexOf(aItem)
+		if (i>=0)
+			aArray.splice(i, 1)
+	}
 }
 }

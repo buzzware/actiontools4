@@ -20,18 +20,20 @@ package au.com.buzzware.actiontools4.code {
 		is unlimited, and can be reasonably captured for rendering purposes.
 		Flash scrollbars will appear, which are virtually the same as browser ones anyway
 		*/
+		/*
 		public static function CaptureStageBitmapData(): BitmapData {
 			var s:Stage = Application.application.stage
 			var result:BitmapData = new BitmapData(s.stageWidth,s.stageHeight,false)
 			result.draw(s,null,null,flash.display.BlendMode.NORMAL)
 			return result;
 		}
+		*/
 		
-		public static function ColorFromString(aString: String, aDefault: String = '#000000'): uint {
-			var result: uint = StyleManager.getColorName(aString);
-			if (result == StyleManager.NOT_A_COLOR)
-				result = StyleManager.getColorName(aDefault);
-			return result;
-		}
+		//public static function ColorFromString(aString: String, aDefault: String = '#000000'): uint {
+		//	var result: uint = StyleManager.getColorName(aString);
+		//	if (result == StyleManager.NOT_A_COLOR)
+		//		result = StyleManager.getColorName(aDefault);
+		//	return result;
+		//}
 	}
 }

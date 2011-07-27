@@ -22,6 +22,7 @@ import mx.utils.URLUtil;
 public class HttpUtils {
 		
 		//returns url of this swf, including params
+	/*
 		public static function get AppUrl(): String {
 			var result: String = Application.application.url;
 			var pos: int;
@@ -30,13 +31,13 @@ public class HttpUtils {
 			result = StringUtils.replaceAll(result,'\\','/')
 			return result;
 		}
-
-		public static function get ServerUrl(): String {	
-			var result: String = AppUrl;
-			var pattern:RegExp = /^[a-zA-z]+:\/\/[^\/]*/;
-		    var reResult:Object = pattern.exec(result);
-			return String(reResult && reResult[0]);
-		}
+	*/
+		//public static function get ServerUrl(): String {	
+		//	var result: String = AppUrl;
+		//	var pattern:RegExp = /^[a-zA-z]+:\/\/[^\/]*/;
+		//   var reResult:Object = pattern.exec(result);
+		//	return String(reResult && reResult[0]);
+		//}
 
 		// combines a path with a root url, dealing with slashes in between. 
 		// If the path is absolute, it overrides the root.
@@ -56,9 +57,9 @@ public class HttpUtils {
 
 		// returns path containing application swf. if a URL is given, it is combined with the application path, overriding it if it is absolute
 		// this is used to expand urls on the server relative to the application swf
-		public static function AppPath(aUrl: String = null): String {
-			return aUrl ? CombineUrl(UrlPath(AppUrl),aUrl) : UrlPath(AppUrl);
-		}
+		//public static function AppPath(aUrl: String = null): String {
+		//	return aUrl ? CombineUrl(UrlPath(AppUrl),aUrl) : UrlPath(AppUrl);
+		//}
 
 		//reduces url to just file/path. no params. does not return a trailing slash
 		public static function CleanUrl(aURL:String): String {
