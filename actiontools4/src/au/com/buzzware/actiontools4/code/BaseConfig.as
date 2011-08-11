@@ -58,7 +58,7 @@ public dynamic class BaseConfig extends EventDispatcher {
 			if ((aSource is XML) || ((aSource is String) && (aSource.charAt(0)=='<'))) {
 				_basePath = (aBasePath==null ? 'simpleItems' : aBasePath)
 				readXml(aSource as XML);
-			} else if ((ReflectionUtils.ClassName(aSource)=='Object') || (aSource is BindableObject)) {
+			} else if ((ReflectionUtils.getClassName(aSource)=='Object') || (aSource is BindableObject)) {
 				readObject(aSource as Object);
 			/*
 			} else if ((aSource is String) && (aSource.charAt(0)=='{')) {

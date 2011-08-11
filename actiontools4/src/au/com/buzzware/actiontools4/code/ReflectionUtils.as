@@ -39,7 +39,7 @@ public class ReflectionUtils {
 				return result
 			}
 
-			public static function getFieldsWithClassNames(aObject: Object): Object {
+			public static function getFieldsWithClassNames(aObject: Object, aDescribeType: XML = null): Object {
 
 				var result: Object = new Object()
 				var dt: XML = describeType(aObject)
@@ -68,6 +68,49 @@ public class ReflectionUtils {
 				}
 
 				return result
+			}
+
+			public static function getFieldType(aObject:Object, aFieldName:String):String {
+				// !!! this could be greatly optimised, to just look for the field and exit
+				var f:Object = getFieldsWithClassNames(aObject)
+				return f[aFieldName]
+			}
+
+			public static function getFieldNames(aObject:Object, aDescribeType: XML = null):Array {
+				var result: Array = new Array()
+				var dt: XML = (aDescribeType || describeType(aObject))
+				var x: XML
+				var name: String
+				var className: String
+				// get <accessor> (name and type)
+				var accessors: XMLList = dt.accessor
+				for each (x in accessors) {
+					name = XmlUtils.Attr(x,'name')
+					result.push(name)
+				}
+
+				// get <variable>
+				var variables: XMLList = dt.variable
+				for each (x in variables) {
+					name = XmlUtils.Attr(x,'name')
+					result.push(name)
+				}
+				// get dynamic properties
+				for (var n:String in aObject) {
+					result.push(n)
+				}
+
+				return result.sort()
+			}
+
+			public static function copyAllFields(aDest:*, aSource:*):Object {
+				ObjectAndArrayUtils.copy_properties(
+					aDest,
+					aSource,
+					getFieldNames(aSource),
+					['mx_internal_uid']
+				)
+				return aDest
 			}
 
 			public static function getClassName(aObject: Object): String {
@@ -135,28 +178,6 @@ public class ReflectionUtils {
 
 	public static function TraceObject(aObject:Object):void {
 		trace(ObjectToString(aObject))
-	}
-
-
-	public static function getFieldType(aObject:Object, aFieldName:String):String {
-		// !!! this could be greatly optimised, to just look for the field and exit
-		var f:Object = getFieldsWithClassNames(aObject)
-		return f[aFieldName]
-	}
-
-	public static function getFieldNames(aObject:Object):Array {
-		var fields:Object = getFieldsWithClassNames(aObject)
-		return ObjectAndArrayUtils.getDynamicPropertyNames(fields)
-	}
-
-	public static function copyAllFields(aDest:*, aSource:*):Object {
-		ObjectAndArrayUtils.copy_properties(
-			aDest,
-			aSource,
-			getFieldNames(aSource),
-			['mx_internal_uid']
-		)
-		return aDest
 	}
 
 	internal static function getLength(o:Object):uint {

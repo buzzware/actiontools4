@@ -11,7 +11,6 @@ package au.com.buzzware.actiontools4.code {
 import flash.xml.XMLNode;
 import flash.xml.XMLNodeType;
 
-import mx.core.Application;
 import mx.managers.CursorManager;
 import mx.rpc.AsyncToken;
 import mx.rpc.events.FaultEvent;

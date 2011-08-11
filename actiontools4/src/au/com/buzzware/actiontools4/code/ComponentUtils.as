@@ -78,7 +78,7 @@ public class ComponentUtils {
 		): DisplayObject {
 			var result: DisplayObject = aComponent
 			while (result = result.parent) {
-				if (ReflectionUtils.ClassName(result)==aClassName)
+				if (ReflectionUtils.getClassName(result)==aClassName)
 					return result;
 			}
 			return null
