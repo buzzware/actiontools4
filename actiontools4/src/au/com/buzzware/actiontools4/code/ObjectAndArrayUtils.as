@@ -106,7 +106,7 @@ public class ObjectAndArrayUtils {
 
 	public static function getPathValue(aObject:Object, aPath:String, aDefault:* = null):* {
 		var nodes:Array = aPath.split('.')
-		var curr:Object = aObject
+		var curr:* = aObject
 		for each (var name:String in nodes) {
 			if (curr == null)
 				return aDefault;
@@ -218,5 +218,34 @@ public class ObjectAndArrayUtils {
 		if (i>=0)
 			aArray.splice(i, 1)
 	}
+
+	// returns properties from source object with values within aAllowed
+	public static function selectPropertiesByValues(aObject: Object,aAllowed: Array): Object {
+		var result: Object = new Object()
+		for (var p:String in aObject) {
+			if (aAllowed.indexOf(aObject[p])>=0)
+				result[p] = aObject[p];
+		}
+		return result
+	}
+
+	public static function propertyNamesWithValues(aObject:Object, aAllowed:Array):Array {
+		var result: Array = new Array()
+		for (var p:String in aObject) {
+			if (aAllowed.indexOf(aObject[p])>=0)
+				result.push(p);
+		}
+		return result
+	}
+
+	public static function isSimpleObject(aObject:Object): Boolean {
+		if (!aObject)
+			return false;
+		var cn: String = ReflectionUtils.getClassName(aObject)
+		if (!cn)
+			return false;
+		return (cn=='Object') || (cn=='BindableObject')
+	}
+
 }
 }

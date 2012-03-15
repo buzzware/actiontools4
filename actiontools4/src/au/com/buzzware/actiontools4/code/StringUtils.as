@@ -269,6 +269,13 @@ package au.com.buzzware.actiontools4.code {
 			return s
 		}
 
+		public static function upcaseFirstChar(aString: String): String {
+			var s: String = aString.charAt(0).toUpperCase()
+			s += aString.substring(1)
+			//return aString.charAt(0).toLowerCase()+aString.substring(1)
+			return s
+		}
+
 		public static function snake_case(aCamelCaseName:String):String {
 			var result: String = StringUtils.downcaseFirstChar(aCamelCaseName)
 			// replace the capital letters with _[lowercase]
@@ -279,6 +286,16 @@ package au.com.buzzware.actiontools4.code {
 				return arguments[1]
 			}
 			result = result.replace(/[A-Z]/, repFn);
+			return result
+		}
+
+		public static function snakeToProperCase(a_name:String):String {
+			if (!a_name)
+				return null;
+			var parts: Array = a_name.split('_')
+			var result: String = ''
+			for each (var i:String in parts)
+				result += upcaseFirstChar(i);
 			return result
 		}
 	}

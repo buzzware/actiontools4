@@ -14,6 +14,8 @@ package au.com.buzzware.actiontools4.code {
 
 import au.com.buzzware.actiontools4.code.StringUtils;
 
+import flash.xml.XMLNode;
+
 import mx.utils.ObjectProxy;
 		
 	public class XmlUtils {
@@ -451,6 +453,24 @@ import mx.utils.ObjectProxy;
 			var result: XML = curr
 			while (curr = curr.parent())
 				result = curr;
+			return result
+		}
+		
+		public static function readSimpleItems(aRoot: XML, aParent: XML = null): Object {
+			var name: String
+			var val: String
+			var result: Object
+			if (!aParent)
+				aParent = XmlUtils.AsNode(aRoot.simpleItems);
+			if (aParent) {
+				result = new Object()
+				var items: XMLList = aParent.item;
+				for each(var i: XML in items) {
+					name = i.@name;
+					val = i.text()
+					result[name] = val
+				}
+			}
 			return result
 		}
 	}

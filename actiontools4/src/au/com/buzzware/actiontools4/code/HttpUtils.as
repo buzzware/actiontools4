@@ -8,6 +8,8 @@
  *--------------------------------------------------------------------------*/
 
 package au.com.buzzware.actiontools4.code {
+import au.com.buzzware.actiontools4.code.ObjectAndArrayUtils;
+
 import flash.xml.XMLNode;
 import flash.xml.XMLNodeType;
 
@@ -242,10 +244,16 @@ public class HttpUtils {
 			aContentType: String = "application/x-www-form-urlencoded",
 			aResultFormat: String = 'text',
 			aResultHandler : Function = null, 
-			aFaultHandler : Function = null   
+			aFaultHandler : Function = null,
+			aHeaders: Object = null
 		) : AsyncToken {
+			if (!aMethod)
+				aMethod = 'GET';
+			if (!aContentType)
+				aContentType = "application/x-www-form-urlencoded";
+			if (!aResultFormat)
+				aContentType = 'text';
 			var http : HTTPService = new HTTPService();
-			
 			http.resultFormat =  aResultFormat;
 			http.url = aURL;
 			if (aMethod=='GET')
@@ -253,7 +261,7 @@ public class HttpUtils {
 			http.method = aMethod;
 			if (aContentType)
 				http.contentType = aContentType;
-			
+			ObjectAndArrayUtils.merge_dynamic_properties_inplace(http.headers,aHeaders)			
 			CursorManager.setBusyCursor();
 			http.addEventListener( 
 				ResultEvent.RESULT, 
