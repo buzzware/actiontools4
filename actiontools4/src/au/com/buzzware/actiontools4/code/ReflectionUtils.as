@@ -50,6 +50,8 @@ public class ReflectionUtils {
 				var accessors: XMLList = dt.accessor
 				for each (x in accessors) {
 					name = XmlUtils.Attr(x,'name')
+					if (name.charAt(0)=='_')
+						continue;
 					className = XmlUtils.Attr(x,'type')
 					result[name] = className
 				}
@@ -85,6 +87,8 @@ public class ReflectionUtils {
 				// get <accessor> (name and type)
 				var accessors: XMLList = dt.accessor
 				for each (x in accessors) {
+					if (name.charAt(0)=='_')
+						continue;
 					name = XmlUtils.Attr(x,'name')
 					result.push(name)
 				}

@@ -282,8 +282,8 @@ package au.com.buzzware.actiontools4.code {
 			//
 			function repFn(): String {
 				// return arguments[2] + arguments[1];
-				trace('repFn')
-				return arguments[1]
+				trace('repFn'+ReflectionUtils.dump(arguments))
+				return '_'+(arguments[0] as String).toLowerCase()
 			}
 			result = result.replace(/[A-Z]/, repFn);
 			return result

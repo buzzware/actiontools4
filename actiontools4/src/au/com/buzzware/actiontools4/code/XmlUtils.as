@@ -8,17 +8,16 @@
  *--------------------------------------------------------------------------*/
 
 package au.com.buzzware.actiontools4.code {
+import au.com.buzzware.actiontools4.air.FileUtils;
 
-	//import mx.xpath.XPathAPI;	
-	//import memorphic.xpath.XPathQuery;
-
-import au.com.buzzware.actiontools4.code.StringUtils;
-
-import flash.xml.XMLNode;
+import flash.filesystem.File;
 
 import mx.utils.ObjectProxy;
-		
-	public class XmlUtils {
+
+//import mx.xpath.XPathAPI;
+	//import memorphic.xpath.XPathQuery;
+
+public class XmlUtils {
 
 		public static function AsNode(aObject: Object): XML {
 			if (aObject is XML)
@@ -473,5 +472,27 @@ import mx.utils.ObjectProxy;
 			}
 			return result
 		}
+
+	public static function getApplicationFileXml(aFilePath:String, aObjectPath:String = null):XML {
+		var sConfig:String = FileUtils.fileToString(File.applicationDirectory.resolvePath(aFilePath))
+		var result:XML = AsNode(XML(sConfig))
+		if (aObjectPath)
+			result = AsNode(ObjectAndArrayUtils.getPathValue(result, aObjectPath));
+		return result;
 	}
+
+	public static function getSimpleItemsObject(xSimpleItems:XML):Object {
+		var oSimpleItems:Object = {}
+		if (xSimpleItems) {
+			var items:XMLList = xSimpleItems.item;
+			for each(var i:XML in items) {
+				var name:String = i.@name;
+				var val:String = i.text()
+				//if (this.hasOwnProperty(name))
+				oSimpleItems[name] = val;
+			}
+		}
+		return oSimpleItems;
+	}
+}
 }

@@ -65,11 +65,24 @@ public class EventUtils {
 		trace(result)
 	}
 
+	protected static var _tracerComponents: Array;
+	protected static var _prefixes: Array;
 	public static function attachEventTracer(aTarget:IEventDispatcher = null, aPrefix:String = null):void {
-		UIComponent.mx_internal::dispatchEventHook = function(aEvent:Event, aComponent:UIComponent):void {
-			if (aTarget && (aComponent != aTarget))
-				return;
-			TraceEvent(aEvent, aPrefix);
+		if (!_tracerComponents) { 	// setup
+			_tracerComponents = []
+			_prefixes = []
+			UIComponent.mx_internal::dispatchEventHook = function(aEvent:Event, aComponent:UIComponent):void {
+				var i: int = _tracerComponents.indexOf(aComponent)
+				if (i>=0)
+					TraceEvent(aEvent, _prefixes[i]);
+			}
+		}
+		var p: int = _tracerComponents.indexOf(aTarget)
+		if (p==-1) {
+			_tracerComponents.push(aTarget);
+			_prefixes.push(aPrefix)
+		} else {
+			_prefixes[p] = aPrefix
 		}
 	}
 
