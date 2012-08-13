@@ -6,6 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 package au.com.buzzware.actiontools4.code {
+import mx.collections.ArrayCollection;
+
 public class ObjectAndArrayUtils {
 	public function ObjectAndArrayUtils() {
 	}
@@ -98,6 +100,19 @@ public class ObjectAndArrayUtils {
 			if (arg is Array) {
 				for each (var value:* in arg) {
 					retArr.push(value);
+				}
+			}
+		}
+		return retArr;
+	}
+
+	public static function mergeArraysUnique(...args):Array {
+		var retArr:Array = new Array();
+		for each (var arg:* in args) {
+			if (arg is Array) {
+				for each (var value:* in arg) {
+					if (retArr.indexOf(value)==-1)
+						retArr.push(value);
 				}
 			}
 		}
@@ -213,11 +228,25 @@ public class ObjectAndArrayUtils {
 		return result;
 	}
 
-	public static function arrayRemove(aArray:Array, aItem:*): void {
+	// this modifies the array and returns it
+	public static function arrayRemove(aArray:Array, aItem:*): Array {
 		var i: int = aArray.indexOf(aItem)
 		if (i>=0)
 			aArray.splice(i, 1)
+		return aArray
 	}
+
+	public static function arrayRemoveClone(aArray: Array, aItem: *): Array {
+		var result: Array = cloneArray(aArray)
+		arrayRemove(result,aItem)
+		return result
+	}
+
+	// this modifies the array and returns it
+	public static function arrayInsert(aArray:Array, aItem:*, aIndex: int): Array {
+		aArray.splice(aIndex, 0, aItem);
+		return aArray;
+	};
 
 	// returns properties from source object with values within aAllowed
 	public static function selectPropertiesByValues(aObject: Object,aAllowed: Array): Object {
@@ -245,6 +274,41 @@ public class ObjectAndArrayUtils {
 		if (!cn)
 			return false;
 		return (cn=='Object') || (cn=='BindableObject')
+	}
+
+	public static function toArrayCollection(aArrayOrCollection:Object, aDefault:ArrayCollection = null):ArrayCollection {
+		if (aArrayOrCollection is ArrayCollection)
+			return aArrayOrCollection as ArrayCollection;
+		else if (aArrayOrCollection is Array)
+			return new ArrayCollection(aArrayOrCollection as Array);
+		return aDefault;
+	}
+
+	public static function toArray(aArrayOrCollection:Object, aDefault:Array = null):Array {
+		if (aArrayOrCollection is Array)
+			return aArrayOrCollection as Array;
+		else if (aArrayOrCollection is ArrayCollection)
+			return (aArrayOrCollection as ArrayCollection).source;
+		return aDefault;
+	}
+
+	public static function propertiesToNameValueArray(aObject: Object, aFields: Array=null): Array {
+		if (!aFields)
+			aFields = getDynamicPropertyNames(aObject); //!!! will miss static properties
+		var result: Array = []
+		for each (var f:String in aFields) {
+			result.push({name: f, value: aObject[f]})
+		}
+	  return result
+	}
+
+	public static function arrayFilterInclude(aSource: Array, aAllowedItems: Array): Array {
+		var result: Array = []
+		for each (var i:* in aSource) {
+			if (aAllowedItems.indexOf(i)>=0)
+				result.push(i);
+		}
+		return result
 	}
 
 }

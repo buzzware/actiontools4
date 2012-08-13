@@ -454,7 +454,7 @@ public class XmlUtils {
 				result = curr;
 			return result
 		}
-		
+
 		public static function readSimpleItems(aRoot: XML, aParent: XML = null): Object {
 			var name: String
 			var val: String
@@ -473,8 +473,41 @@ public class XmlUtils {
 			return result
 		}
 
+		public static function createSimpleItems(aSource: Object, aRoot: XML, aParent: XML = null, aFields: Array = null): XML {
+			var name: String
+			var val: String
+			var result: Object
+			if (!aParent) {
+				aParent = XmlUtils.AsNode(aRoot.simpleItems)
+				if (!aParent) {
+					aParent = new XML('<simpleItems/>')
+					aRoot.appendChild(aParent);
+				}
+			}
+			if (!aFields)
+				aFields = ReflectionUtils.getFieldNames(aSource);
+
+			//var items: XMLList = aParent.item;
+			for each(var f: String in aFields)
+				XmlUtils.addFromString(aParent,'<item name="'+f+'">'+ConversionUtils.toString(aSource[f],'')+'</item>');
+			return aParent
+		}
+
+	public static function objectToXmlConfigFile(aSource: Object, aRootTag: String,  aFile: File): File {
+		var content: String = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'+File.lineEnding
+		var xdoc: XML = new XML('<'+aRootTag+'/>');
+		createSimpleItems(aSource,xdoc)
+		content += xdoc.toXMLString().replace(/\n/g, File.lineEnding)
+		FileUtils.stringToFile(content,'app-storage:/config.xml')
+		return aFile
+	}
+
 	public static function getApplicationFileXml(aFilePath:String, aObjectPath:String = null):XML {
-		var sConfig:String = FileUtils.fileToString(File.applicationDirectory.resolvePath(aFilePath))
+		return getFileXml(File.applicationStorageDirectory.resolvePath(aFilePath),aObjectPath)
+	}
+
+	public static function getFileXml(aFileOrName:Object, aObjectPath:String = null):XML {
+		var sConfig:String = FileUtils.fileToString(aFileOrName)
 		var result:XML = AsNode(XML(sConfig))
 		if (aObjectPath)
 			result = AsNode(ObjectAndArrayUtils.getPathValue(result, aObjectPath));

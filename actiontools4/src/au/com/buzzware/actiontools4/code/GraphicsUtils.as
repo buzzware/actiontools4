@@ -8,8 +8,15 @@
  *--------------------------------------------------------------------------*/
 
 package au.com.buzzware.actiontools4.code {
-	import flash.display.BitmapData;
-	import mx.core.Application;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Loader;
+import flash.display.LoaderInfo;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.filesystem.File;
+import flash.net.URLRequest;
+
 	import flash.display.Stage;
 	import mx.styles.StyleManager;	
 
@@ -35,5 +42,36 @@ package au.com.buzzware.actiontools4.code {
 		//		result = StyleManager.getColorName(aDefault);
 		//	return result;
 		//}
+
+		public static function randomLightColor(aRange: int = 64): int {
+			var colText: int = 255-int(Math.random()*aRange)
+			colText <<= 8
+			colText |= 255-int(Math.random()*aRange)
+			colText <<= 8
+			colText |= 255-int(Math.random()*aRange)
+			return colText
+		}
+
+		public static function randomDarkColor(aRange: int = 64): int {
+			var colText: int = int(Math.random()*aRange)
+			colText <<= 8
+			colText |= int(Math.random()*aRange)
+			colText <<= 8
+			colText |= int(Math.random()*aRange)
+			return colText
+		}
+
+		public static function loadBitmap(aUrl: String, aHandler: Function): void {
+			var loader: Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(event: Event): void {
+				var li: LoaderInfo = event.target as LoaderInfo
+				aHandler(Bitmap(li.content))
+			});
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,function(event: Event): void {
+				aHandler(event)
+			})
+			var req: URLRequest = new URLRequest(aUrl)
+			loader.load(req)
+		}
 	}
 }

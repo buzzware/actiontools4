@@ -123,7 +123,7 @@ package br.com.stimuli.string
 	                }else if (formater == OCTAL_FORMATER){
 	                    match.replacement = "0" + int(replacementValue).toString(8);
 	                }else if (formater == HEXA_FORMATER){
-	                    match.replacement = "0x" + int(replacementValue).toString(16);
+	                    match.replacement = padString(int(replacementValue).toString(16),int(precision), '0')
 	                }else if(DATES_FORMATERS.indexOf(formater) > -1){
 	                    switch (formater){
 	                        case DATE_DAY_FORMATTER:

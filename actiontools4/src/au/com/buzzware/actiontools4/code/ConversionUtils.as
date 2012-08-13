@@ -1,4 +1,10 @@
 package au.com.buzzware.actiontools4.code {
+import flash.filesystem.File;
+import flash.filesystem.FileMode;
+import flash.filesystem.FileStream;
+import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+
 import mx.utils.StringUtil;
 
 public class ConversionUtils  {
@@ -37,25 +43,56 @@ public class ConversionUtils  {
 			case 'String':
 				if (aValue is String)
 					return aValue;
-				if (aValue is Number)
-					return StringUtils.formatDecimals(Number(aValue),8);
 				if (aValue is int)
 					return aValue.toString();
+				if (aValue is Number)
+					return StringUtils.formatDecimals(Number(aValue),8);
 				if (aValue is Date)
 					return DateUtils.toW3C(aValue);
 			break;
 			case 'Date':
 				if (aValue is Date)
 					return aValue;
-				if (aValue is Number)
-					return new Date(aValue);
 				if (aValue is int)
+					return new Date(aValue);
+				if (aValue is Number)
 					return new Date(aValue);
 				if (aValue is String)
 					return DateUtils.parseW3C(aValue,-99999999,aDefault);
 			break;
 		}
 		return aDefault;
+	}
+
+	public static function toInt(aValue:*,aDefault: int=0): int {
+		return convertValueToTypeByName(aValue,'int',aDefault) as int
+	}
+
+	public static function toString(aValue:*,aDefault: String=null): String {
+		return convertValueToTypeByName(aValue,'String',aDefault) as String
+	}
+
+	public static function toNumber(aValue: *,aDefault: Number=NaN): Number {
+		return convertValueToTypeByName(aValue,'Number',aDefault) as Number
+	}
+
+	public static function toBoolean(aValue: *, aDefault: Boolean=false): Boolean {
+		return convertValueToTypeByName(aValue,'Boolean',aDefault) as Boolean
+	}
+
+	public static function byteArrayFromDataInput(aData: IDataInput): ByteArray {
+		var result: ByteArray = new ByteArray();
+		aData.readBytes(result);
+		result.position = 0
+		return result
+	}
+
+	public static function byteArrayToFile(aImageBytes: ByteArray, aFile: File): File {
+		var stream: FileStream = new FileStream()
+		stream.open(aFile, FileMode.WRITE)
+		stream.writeBytes(aImageBytes)
+		stream.close()
+		return aFile
 	}
 
 }

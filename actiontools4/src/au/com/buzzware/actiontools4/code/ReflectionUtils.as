@@ -10,29 +10,41 @@ import flash.utils.getQualifiedClassName;
 import flash.utils.getQualifiedSuperclassName;
 
 import mx.core.mx_internal;
-import mx.rpc.events.ResultEvent; use namespace mx_internal;	// should be last import
+import mx.rpc.events.ResultEvent;
+import mx.utils.DescribeTypeCache;
+
+use namespace mx_internal;	// should be last import
 
 public class ReflectionUtils {
 	private static var _dumpString:String = "";
 	private static var _dumpIndent:String = "";
 
-			public static function metadataForAttribute(aClass: Class,aAttribute: String,aDescribeTypeXml: XML=null): XMLList {
-				if (!aDescribeTypeXml)
-					aDescribeTypeXml = describeType(aClass);
-				var q: XMLList = aDescribeTypeXml.factory.children().(name()=='accessor' || name()=='variable').(attribute('name')==aAttribute).metadata
-				return q
-			}
+	public static function describeClass(aClassOrObject: Object): XML {
+		var clazz: Class = aClassOrObject as Class
+		if (!clazz)
+			clazz = getClass(aClassOrObject);
+		if (!clazz)
+			return null;
+		return DescribeTypeCache.describeType(clazz).typeDescription;
+	}
+
+	public static function metadataForAttribute(aClass: Class,aAttribute: String,aDescribeTypeXml: XML=null): XMLList {
+		if (!aDescribeTypeXml)
+			aDescribeTypeXml = describeClass(aClass);
+		var q: XMLList = aDescribeTypeXml.factory.children().(name()=='accessor' || name()=='variable').(attribute('name')==aAttribute).metadata
+		return q
+	}
 
 			public static function attributeHasMetadata(aClass: Class,aAttribute: String,aMetadataName: String,aDescribeTypeXml: XML=null): Boolean {
 				if (!aDescribeTypeXml)
-					aDescribeTypeXml = describeType(aClass);
+					aDescribeTypeXml = describeClass(aClass);
 				var metadatas: XMLList = metadataForAttribute(aClass,aAttribute,aDescribeTypeXml).(@name==aMetadataName)
 				return metadatas.length()>0
 			}
 
 			public static function attributeMetadataValue(aClass: Class,aAttribute: String,aMetadataName: String,aMetadataKey: String,aDescribeTypeXml: XML=null): String {  //  class,'comment','Bindable','event')
 				if (!aDescribeTypeXml)
-					aDescribeTypeXml = describeType(aClass);
+					aDescribeTypeXml = describeClass(aClass);
 				var metadatas: XMLList = metadataForAttribute(aClass,aAttribute,aDescribeTypeXml).(@name==aMetadataName)
 				var arg: XML = XmlUtils.AsNode(metadatas.arg.(@key==aMetadataKey))
 				var result: String = XmlUtils.Attr(arg,'value') //metadatas.arg.(@key==aMetadataKey).@value
@@ -42,7 +54,11 @@ public class ReflectionUtils {
 			public static function getFieldsWithClassNames(aObject: Object, aDescribeType: XML = null): Object {
 
 				var result: Object = new Object()
-				var dt: XML = describeType(aObject)
+				try {
+					var dt: XML = describeClass(aObject)
+				} catch (e: Error) {
+					trace(e.message)
+				}
 				var x: XML
 				var name: String
 				var className: String
@@ -80,16 +96,17 @@ public class ReflectionUtils {
 
 			public static function getFieldNames(aObject:Object, aDescribeType: XML = null):Array {
 				var result: Array = new Array()
-				var dt: XML = (aDescribeType || describeType(aObject))
+				var dt: XML = (aDescribeType || describeClass(aObject))
 				var x: XML
 				var name: String
 				var className: String
 				// get <accessor> (name and type)
-				var accessors: XMLList = dt.accessor
+				//var accessors: XMLList = dt.accessor
+				var accessors: XMLList = dt..accessor //.(@declaredBy == theXML.@name);
 				for each (x in accessors) {
-					if (name.charAt(0)=='_')
-						continue;
 					name = XmlUtils.Attr(x,'name')
+					if ((name.charAt(0)=='_') || (name=='prototype'))
+						continue;
 					result.push(name)
 				}
 

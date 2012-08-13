@@ -85,7 +85,10 @@ package au.com.buzzware.actiontools4.code {
 		
 		public static function toInt(aString: String, aDefault: int = 0): int {
 			var temp: Number = parseInt(aString)
-			return isNaN(temp) ? aDefault : int(temp)
+			if (isNaN(temp))
+				return aDefault;
+			else
+				return int(temp);
 		}
 		
 		public static function toFloat(aString: String, aDefault: Number = NaN): Number {
@@ -200,7 +203,28 @@ package au.com.buzzware.actiontools4.code {
 				result = result.replace(aFind,aReplace);
 			return result;
 		}
-		
+
+		public static function replaceAll2(aSource:String, aPattern:*, aHandler:Function):String {
+			var iRest: int = 0
+			var matchFound: Boolean
+			do {
+				matchFound = false
+				aSource = aSource.replace(
+					aPattern,
+					function (aWholeMatch: String, ...args): String {
+						matchFound = true
+						var wholeString: String = args.pop() as String
+						var pos: int = args.pop() as int
+						var replacement: String = aHandler(aWholeMatch,pos,args)
+						iRest = pos+replacement.length+1
+						return replacement
+					}
+				);
+			} while (matchFound);
+			return aSource
+		}
+
+
 		/*
 		
 		0123456
@@ -227,12 +251,16 @@ package au.com.buzzware.actiontools4.code {
 			var i: int = aString.indexOf(aPrefix);
 			return (i==0) ? aString.substring(aPrefix.length) : aString;
 		}
-		
+
 		public static function firstMatch(aString: String, aPattern: RegExp): String {
 			var html: Array = aString.match(aPattern);//  /<HTML.*<\/HTML>/ms);
 			return html.length==0 ? null : html[0];
 		}
-		
+
+		public static function hasMatch(aString: String, aPattern: RegExp): Boolean {
+			return aString.search(aPattern)>=0
+		}
+
 		public static function split3(aString: String,aPattern: Object): Array {
 			var search: int = aString.search(aPattern)
 			if (search==-1)
@@ -282,7 +310,6 @@ package au.com.buzzware.actiontools4.code {
 			//
 			function repFn(): String {
 				// return arguments[2] + arguments[1];
-				trace('repFn'+ReflectionUtils.dump(arguments))
 				return '_'+(arguments[0] as String).toLowerCase()
 			}
 			result = result.replace(/[A-Z]/, repFn);
@@ -297,6 +324,39 @@ package au.com.buzzware.actiontools4.code {
 			for each (var i:String in parts)
 				result += upcaseFirstChar(i);
 			return result
+		}
+
+		// returns first match of aPattern in aSource or null
+		public static function extract(aSource:String, aPattern:RegExp):String {
+			if (!aSource || !aPattern)
+				return null;
+			var matches: Array = aSource.match(aPattern)
+			if (!matches || !matches.length)
+				return null;
+			return matches[0]
+		}
+
+		public static function replaceTokens(aKeyPattern: String, aTokenValues: Object): String {
+			var result: String = aKeyPattern
+			for (var k: String in aTokenValues)
+				result = StringUtils.replaceAll(result, ':'+k,  aTokenValues[k]);
+			return result
+		}
+
+		public static function matchesAny(aString: String, aStringsAndRegexs: Array): Boolean {
+			for each (var i: Object in aStringsAndRegexs) {
+				var match: Boolean
+				if (i is String) {
+					match = (aString==(i as String));
+				} else if (i==null && aString==null) {
+					match = true
+				} else if (i is RegExp) {
+					match = aString && aString.search(i)>=0
+				}
+				if (match)
+					return true;
+			}
+			return false
 		}
 	}
 }

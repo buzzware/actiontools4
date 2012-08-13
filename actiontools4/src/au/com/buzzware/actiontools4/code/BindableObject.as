@@ -56,26 +56,47 @@ use namespace flash_proxy;
             eventDispatcher = new EventDispatcher(this);
         }
         
-        flash_proxy override function getProperty(name:*):*
-        {
-            return strings[name];
+        flash_proxy override function getProperty(name:*):* {
+	        if (name is QName)
+	          name = name.localName;
+          var result: * = strings[name]
+	        return result;
         }
-        
-        flash_proxy override function setProperty(name:*, value:*):void
-        {
-            var oldValue:* = strings[name];
-            strings[name] = value;
-            var kind:String = PropertyChangeEventKind.UPDATE;
-            dispatchEvent(new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE, false, false, kind, name, oldValue, value, this));
-        }
-				
-				flash_proxy override function hasProperty(name:*):Boolean {
+
+	    flash_proxy override function setProperty(name:*, value:*):void {
+		    if (name is QName)
+			    name = name.localName;
+		    var oldValue:* = strings[name];
+		    strings[name] = value;
+		    var kind:String = PropertyChangeEventKind.UPDATE;
+		    dispatchEvent(new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE, false, false, kind, name, oldValue, value, this));
+	    }
+
+	    flash_proxy override function deleteProperty(name:*):Boolean {
+		    if (name is QName)
+			    name = name.localName;
+		    var oldValue:*
+		    if (strings.hasOwnProperty(name))
+			    oldValue = strings[name];
+		    var result: Boolean = delete strings[name]
+		    if (oldValue!==undefined) {
+			    var kind:String = PropertyChangeEventKind.DELETE;
+			    dispatchEvent(new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE, false, false, kind, name, oldValue, undefined, this));
+		    }
+		    return result
+	    }
+
+	    flash_proxy override function hasProperty(name:*):Boolean {
+					if (name is QName)
+						name = name.localName;
 					return strings.hasOwnProperty(name)
 				}
 				
 				// called when calling dynamic methods. From http://www.kirupa.com/forum/showthread.php?p=1939920
 				override flash_proxy function callProperty(name:*, ... args):* {
-					name = String(name);					
+					if (name is QName)
+						name = name.localName;
+					name = String(name);
 					var callType:String = name.slice(0,3); // get or set
 					var callVariable:String = name.slice(3); // variable name behind get or set
 					switch(callType) {

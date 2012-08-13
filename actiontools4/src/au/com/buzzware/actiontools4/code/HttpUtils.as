@@ -8,8 +8,14 @@
  *--------------------------------------------------------------------------*/
 
 package au.com.buzzware.actiontools4.code {
-import au.com.buzzware.actiontools4.code.ObjectAndArrayUtils;
-
+import flash.events.Event;
+import flash.events.HTTPStatusEvent;
+import flash.events.IOErrorEvent;
+import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
+import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
+import flash.net.URLRequest;
 import flash.xml.XMLNode;
 import flash.xml.XMLNodeType;
 
@@ -269,13 +275,19 @@ public class HttpUtils {
 					CursorManager.removeBusyCursor();
 				} 
 			);
-			http.addEventListener( 
-				FaultEvent.FAULT, 
-				function(event : FaultEvent) : void { 
+			http.addEventListener(
+				FaultEvent.FAULT,
+				function(event : FaultEvent) : void {
 					CursorManager.removeBusyCursor();
 				}
 			);
-			
+			http.addEventListener(
+				HTTPStatusEvent.HTTP_RESPONSE_STATUS,
+				function(event : Event) : void {
+					//ReflectionUtils.TraceObject(event)
+				}
+			);
+
 			if( aResultHandler != null) http.addEventListener( ResultEvent.RESULT, aResultHandler );
 			if( aFaultHandler != null) http.addEventListener( FaultEvent.FAULT, aFaultHandler );
 					
@@ -311,8 +323,25 @@ public class HttpUtils {
 		{
 			return escape( XML( new XMLNode( XMLNodeType.TEXT_NODE, url ) ).toXMLString() );
 		}
-	
+
+	public static function getBinary(aUrl:String, aCompleteHandler:Function, aErrorHandler:Function = null, aStatusHandler:Function = null):void {
+		var request:URLRequest = new URLRequest(aUrl);
+		var loader:URLLoader = new URLLoader()
+		loader.dataFormat = URLLoaderDataFormat.BINARY
+		if (aErrorHandler != null) {
+			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, aErrorHandler)
+			loader.addEventListener(IOErrorEvent.IO_ERROR, aErrorHandler)
+		}
+		if (aStatusHandler != null) {
+			loader.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, aStatusHandler)
+			loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, aStatusHandler)
+			loader.addEventListener(ProgressEvent.PROGRESS, aStatusHandler)
+			loader.addEventListener(Event.OPEN, aStatusHandler)
+		}
+		loader.addEventListener(Event.COMPLETE, aCompleteHandler)
+		loader.load(request)
 	}
+}
 	
 	
 	
