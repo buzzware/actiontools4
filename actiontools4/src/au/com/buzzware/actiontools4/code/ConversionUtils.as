@@ -19,7 +19,7 @@ public class ConversionUtils  {
 				if (aValue is String)
 					return StringUtils.toInt(aValue,aDefault);
 				if (aValue is Date)
-					return int(Date(aValue).getTime());
+					return int((aValue as Date).getTime());
 			break;
 			case 'Number':
 				if (aValue is Number)
@@ -29,7 +29,7 @@ public class ConversionUtils  {
 				if (aValue is String)
 					return StringUtils.toFloat(aValue,aDefault);
 				if (aValue is Date)
-					return Date(aValue).getTime();
+					return (aValue as Date).getTime();
 			break;
 			case 'Boolean':
 				if (aValue is Boolean)
@@ -53,10 +53,10 @@ public class ConversionUtils  {
 			case 'Date':
 				if (aValue is Date)
 					return aValue;
-				if (aValue is int)
-					return new Date(aValue);
 				if (aValue is Number)
-					return new Date(aValue);
+					return new (aValue as Date);
+				if (aValue is int)
+					return new (aValue as Date);
 				if (aValue is String)
 					return DateUtils.parseW3C(aValue,-99999999,aDefault);
 			break;

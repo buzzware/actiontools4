@@ -358,5 +358,12 @@ package au.com.buzzware.actiontools4.code {
 			}
 			return false
 		}
+
+		public static function repeatString(s: String, i: int): String {
+			var result: String = ''
+			while(i-- > 0)
+				result += s;
+			return result;
+		}
 	}
 }

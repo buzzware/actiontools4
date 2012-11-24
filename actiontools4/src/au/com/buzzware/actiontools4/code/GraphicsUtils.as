@@ -14,13 +14,10 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.filesystem.File;
+import flash.geom.Matrix;
 import flash.net.URLRequest;
 
-	import flash.display.Stage;
-	import mx.styles.StyleManager;	
-
-	public class GraphicsUtils {
+public class GraphicsUtils {
 
 		/*
 		Set application width and height to 100% so the stage doesn't grow with content that 
@@ -73,5 +70,37 @@ import flash.net.URLRequest;
 			var req: URLRequest = new URLRequest(aUrl)
 			loader.load(req)
 		}
+
+	public static function rotateBitmap(aOriginal: BitmapData, aAngle: int): BitmapData {
+		var h, w: int
+		switch (aAngle) {
+			case 0:
+			case 180:
+			case 360:
+			//return aOriginal; break;  // not a clone
+			case -180:
+			case -360:
+				h = aOriginal.height
+				w = aOriginal.width
+				break;
+			case 90:
+			case 270:
+			case -90:
+			case -270:
+				h = aOriginal.width
+				w = aOriginal.height
+				break;
+			default:
+				throw new Error("only 0,90,180,270 degree rotations supported at present")
+		}
+		var matrix: Matrix = new Matrix();
+		matrix.translate(-aOriginal.width / 2, -aOriginal.height / 2);
+		matrix.rotate(aAngle * (Math.PI / 180));
+		//matrix.scale()
+		matrix.translate(w / 2, h / 2);
+		var after: BitmapData = new BitmapData(w, h, false, 0x00000000);
+		after.draw(aOriginal, matrix);
+		return after;
 	}
+}
 }

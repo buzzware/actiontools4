@@ -13,6 +13,8 @@ public class ObjectAndArrayUtils {
 	}
 
 	public static function cloneArray(aArray:Array):Array {
+		if (!aArray)
+			return null;
 		return aArray.map(function(e:*, ...r):* {
 			return e
 		});
@@ -311,5 +313,25 @@ public class ObjectAndArrayUtils {
 		return result
 	}
 
+	public static function getObjectId(aObject:*):String
+	{
+		var memoryHash:String;
+
+		try
+		{
+			FakeClass(aObject);
+		}
+		catch (e:Error)
+		{
+			memoryHash = String(e).replace(/.*([@|\$].*?) to .*$/gi, '$1');
+		}
+
+		return memoryHash;
+	}
+
 }
+
 }
+
+internal class FakeClass { }
+

@@ -11,13 +11,20 @@ package au.com.buzzware.actiontools4.code {
 	import br.com.stimuli.string.printf;
 	
 	import com.adobe.utils.DateUtil;
-	
-	public class DateUtils {
+
+import mx.formatters.DateFormatter;
+
+public class DateUtils {
+
+	public static const msSecond:int = 1000;
+	public static const msMinute:int = 1000 * 60;
+	public static const msHour:int = 1000 * 60 * 60;
+	public static const msDay:int = 1000 * 60 * 60 * 24;
 		
-		public static const msMinute:int = 1000 * 60; 
-		public static const msHour:int = 1000 * 60 * 60; 
-		public static const msDay:int = 1000 * 60 * 60 * 24;	
-		
+		public static function difference(aDate1: Date, aDate2: Date): Number {
+			return aDate2.time - aDate1.time
+		}
+
 		public static function addDays(aDate: Date,aDays: Number): Date {
 			return new Date(aDate.getTime() + (aDays*msDay));
 		}
@@ -31,6 +38,22 @@ package au.com.buzzware.actiontools4.code {
 			return Math.floor((aDate2.time - aDate1.time)/msDay); 		
 		}
 		
+		public static function millisecondsDifference(aDate1: Date, aDate2: Date): Number {
+			return Math.floor(aDate2.time - aDate1.time);
+		}
+
+		public static function secondsDifference(aDate1: Date, aDate2: Date): int {
+			return Math.floor((aDate2.time - aDate1.time)/msSecond);
+		}
+
+		public static function millisecondsSince(aDate: Date): Number {
+			return millisecondsDifference(aDate,new Date())
+		}
+
+		public static function secondsSince(aDate: Date): Number {
+			return secondsDifference(aDate,new Date())
+		}
+
 		public static function today(): Date {
 			var result:Date = new Date();
 			return new Date(result.fullYear,result.month,result.date);
@@ -95,6 +118,24 @@ package au.com.buzzware.actiontools4.code {
 				'%02d-%02d-%02d',
 				date.fullYearUTC,date.monthUTC+1,date.dateUTC
 			)
+			return result
+		}
+
+		public static function toUniversal(aDate: Date, aTimezoneMinutes: int = -99999999): String {
+			if (!aDate)
+				return null;
+			if (aTimezoneMinutes==-99999999)
+				aTimezoneMinutes = localTimezoneMinutes();
+			var date: Date = new Date(aDate.time + aTimezoneMinutes*60000)
+			/*
+			var result: String = printf(
+				'%02d-%02d-%02d',
+				date.fullYearUTC,date.monthUTC+1,date.dateUTC
+			)
+			*/
+			var df: DateFormatter = new DateFormatter()
+			df.formatString = "D MMM YYYY"
+			var result: String = df.format(date)
 			return result
 		}		
 		

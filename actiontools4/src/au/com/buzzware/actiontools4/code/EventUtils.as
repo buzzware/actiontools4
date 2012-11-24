@@ -105,7 +105,8 @@ public class EventUtils {
 			aEventType,
 			function(aEvent:Event):void {
 				aTarget.removeEventListener(aEventType, arguments.callee)
-				aEventHandler(aEvent)
+				if (aEventHandler!=null)
+					aEventHandler(aEvent);
 			}
 		)
 	}

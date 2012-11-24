@@ -129,7 +129,7 @@ public class ReflectionUtils {
 					aDest,
 					aSource,
 					getFieldNames(aSource),
-					['mx_internal_uid']
+					['mx_internal_uid','uid']
 				)
 				return aDest
 			}

@@ -601,7 +601,7 @@ package com.adobe.utils
 		* @param includeMilliseconds Determines whether to include the
 		* milliseconds value (if any) in the formatted string.
 		*
-		* @returns
+		* @returns String
 		*
 		* @langversion ActionScript 3.0
 		* @playerversion Flash 9.0

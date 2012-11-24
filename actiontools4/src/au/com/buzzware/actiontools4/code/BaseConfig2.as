@@ -1,5 +1,6 @@
 package au.com.buzzware.actiontools4.code {
 
+import au.com.buzzware.actiontools4.air.EncryptedLocalStore2;
 import au.com.buzzware.actiontools4.air.FileUtils;
 import au.com.buzzware.actiontools4.code.XmlUtils;
 
@@ -9,6 +10,12 @@ public class BaseConfig2 extends BindableObject {
 
 	protected var _file: File;
 	protected var _rootName: String;
+	protected var _storeKey: String;
+	protected var _nonStoredFields: Array;
+
+	public function setNonStoredFields(aFields: Array): void {
+		_nonStoredFields = aFields
+	}
 
 	public function mergeProperties(aObject: *): void {
 		var sourceFields: Object = ReflectionUtils.getFieldsWithClassNames(aObject)
@@ -57,6 +64,26 @@ public class BaseConfig2 extends BindableObject {
 		}
 		var file: File = FileUtils.toFile(aFileOrName)
 		XmlUtils.objectToXmlConfigFile(this,aRootTag,file)
+	}
+
+	public function readFromStore(aStoreKey: String, aKeep: Boolean = false): void {
+		if (aKeep)
+			_storeKey = aStoreKey;
+		var config: Object = EncryptedLocalStore2.getAsJson(aStoreKey)
+		var simpleItems:Object = ObjectAndArrayUtils.getPathValue(config,'simpleItems')
+		if (simpleItems)
+			readDynamicProperties(simpleItems);
+	}
+
+	public function writeToStore(aStoreKey: String = null): void {
+		if (!aStoreKey) {
+			if (!_storeKey)
+				throw new Error('writeToStore: no key supplied to write to');
+			aStoreKey = _storeKey
+		}
+		var fields: Array = ReflectionUtils.getFieldNames(this)
+		var oConfig: Object = {simpleItems: ObjectAndArrayUtils.copy_properties({},this,fields,_nonStoredFields)}
+		EncryptedLocalStore2.setAsJson(aStoreKey,oConfig)
 	}
 
 }
